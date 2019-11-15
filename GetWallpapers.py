@@ -31,14 +31,18 @@ def getHtmlText(url):
     try:
         r = requests.get(url,timeout = 10)
         r.raise_for_status()
-        r.encoding = r.apparent_encoding
+        r.encoding = 'gb2312'
         return r.text
     except:
         return "error"
-import requests,os
-from bs4 import BeautifulSoup as bs
+import requests,os,re,lxml
+from bs4 import BeautifulSoup
 #for id in range(32):
-message = getHtmlText("http://desk.zol.com.cn/dongman/"+"1"+".html")
-print(message)
+html ="http://desk.zol.com.cn/dongman/"+"1"+".html"
+message = getHtmlText(html)
+soup = BeautifulSoup(message,'lxml')
+for x in soup.find_all('li',class_='photo-list-padding'):
+    print(x)
+print("------------------\n"+os.getcwd())
     
 
