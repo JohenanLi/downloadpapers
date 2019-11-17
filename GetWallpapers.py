@@ -46,20 +46,27 @@ def makePageDirs(id):#创建每页目录
     filepath ="D:\\壁纸\\"+str(id)
     if os.path.exists(filepath) == False:
         os.mkdir(filepath)
+        print("创建了"+id+"文件夹")
 
 def makeSonDirs(id,imgName):#创建子目录
     if os.path.exists("D:\\壁纸\id\imgName") == False:
         os.mkdir("D:\\壁纸\id\imgName")
+        print("创建了"+imgName+"文件夹")
+
 
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
-makeIndexDirs()
-for id in range(1,2):
-    makePageDirs(id)
-    html ="http://desk.zol.com.cn/dongman/"+str(id)+".html"
+main()
+
+def main():
+    makeIndexDirs()
+    for id in range(1,2):
+        makePageDirs(id)
     message = getHtmlText(html)
     soup = BeautifulSoup(message,'lxml')
-    xlist = []
-    for x in soup.find_all("li",class_="photo-list-padding"):
-        xlist += x
-    print(xlist.split(str="title"))
+    xList = []
+    for x in soup.find_all("a",class_="pic",span.title):
+        xList += x
+    print(xList)
+
+    
