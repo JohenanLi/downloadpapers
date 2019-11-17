@@ -34,25 +34,34 @@ def getHtmlText(url):#获取指定url下的源代码
         r.encoding = 'gb2312'#已知网页编码为gb2312
         return r.text
     except:
-        return "error"
+        return "获取url源代码时失败"
 
 def makeIndexDirs():#创建主目录
-    if os.path.exists("D:\\壁纸") == False:
-        os.mkdir("D:\\壁纸")
-        os.chdir("D:\\壁纸")
-    print("当前壁纸下载存于D:\\壁纸")
+    try:
+        if os.path.exists("D:\\壁纸") == False:
+            os.mkdir("D:\\壁纸")
+            os.chdir("D:\\壁纸")
+        print("当前壁纸下载存于D:\\壁纸")
+    except:
+        return "创建主目录时失败"
 
 def makePageDirs(id):#创建每页目录
-    filepath ="D:\\壁纸\\"+str(id)
-    if os.path.exists(filepath) == False:
-        os.mkdir(filepath)
-        print("创建了"+id+"文件夹")
+    try:
+        filepath ="D:\\壁纸\\"+str(id)
+        if os.path.exists(filepath) == False:
+            os.mkdir(filepath)
+            print("创建了"+id+"文件夹")
+    except:
+        return "创建每页目录时失败"
 
 def makeSonDirs(id,imgName):#创建子目录
-    if os.path.exists("D:\\壁纸\id\imgName") == False:
-        os.mkdir("D:\\壁纸\id\imgName")
-        print("创建了"+imgName+"文件夹")
-
+    try:
+        imgFile = "D:\\壁纸\\"+str(id)+imgName
+        if os.path.exists() == False:
+            os.mkdir(imgFile)
+            print("创建了"+imgName+"文件夹")
+    except:
+        print("创建套图文件夹失败")
 
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
@@ -61,12 +70,11 @@ main()
 def main():
     makeIndexDirs()
     for id in range(1,2):
+        html = "http://desk.zol.com.cn/dongman/"+str(id)+".html"
         makePageDirs(id)
-    message = getHtmlText(html)
-    soup = BeautifulSoup(message,'lxml')
-    xList = []
-    for x in soup.find_all("a",class_="pic",span.title):
-        xList += x
-    print(xList)
+        htmlText = getHtmlText(html)
+        soup =BeautifulSoup(htmlText,'html.parser')
+        all_img=soup.find('li',class_='photo-list-padding').find('ul').find_all("a",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+
 
     
