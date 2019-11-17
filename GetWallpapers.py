@@ -27,22 +27,39 @@
 •xpath语法：https://www.cnblogs.com/songshu120/p/5182043.html
 •sys：https://www.cnblogs.com/mufenglin/p/7676160.html
 """
-def getHtmlText(url):
-    try:
+def getHtmlText(url):#获取指定url下的源代码
+    try:#使用try excpet捕捉错误
         r = requests.get(url,timeout = 10)
         r.raise_for_status()
-        r.encoding = 'gb2312'
+        r.encoding = 'gb2312'#已知网页编码为gb2312
         return r.text
     except:
         return "error"
+
+def makeIndexDirs():#创建主目录
+    if os.path.exists("D:\\壁纸") == False:
+        os.mkdir("D:\\壁纸")
+        os.chdir("D:\\壁纸")
+    print("当前壁纸下载存于D:\\壁纸")
+
+def makePageDirs(id):#创建每页目录
+    filepath ="D:\\壁纸\\"+str(id)
+    if os.path.exists(filepath) == False:
+        os.mkdir(filepath)
+
+def makeSonDirs(id,imgName):#创建子目录
+    if os.path.exists("D:\\壁纸\id\imgName") == False:
+        os.mkdir("D:\\壁纸\id\imgName")
+
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
-#for id in range(32):
-html ="http://desk.zol.com.cn/dongman/"+"1"+".html"
-message = getHtmlText(html)
-soup = BeautifulSoup(message,'lxml')
-for x in soup.find_all('li',class_='photo-list-padding'):
-    print(x)
-print("------------------\n"+os.getcwd())
-    
-
+makeIndexDirs()
+for id in range(1,2):
+    makePageDirs(id)
+    html ="http://desk.zol.com.cn/dongman/"+str(id)+".html"
+    message = getHtmlText(html)
+    soup = BeautifulSoup(message,'lxml')
+    xlist = []
+    for x in soup.find_all("li",class_="photo-list-padding"):
+        xlist += x
+    print(xlist.split(str="title"))
