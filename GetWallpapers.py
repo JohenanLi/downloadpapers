@@ -1,4 +1,3 @@
-#coding : gb2312
 """
 一、内容
 爬取壁纸并保存到本地
@@ -11,12 +10,6 @@
 5.要有提示信息，格式：正在下载 (下载数量)：(图片名字)。
  如，在下载第 20张图片 秋田君的小漫画 时，提示应为：正在下载 20：秋田君的小漫画。
 6.要有错误处理并给出相应提示，如：图片下载失败、网络超时的处理等。
-7.变量命名要规范：使用驼峰命名或下划线命名，如：myCourseTable或 my_course_table。
-8.不要出现无意义的命名，如：课表
- 正确：course_table, school_timetable, timetable, schoolTimetable等。
- 错误：t, kb, k，kebiao等。
-9.必要的注释，但不可太多，尤其是不要行行都有注释。
-10.代码缩进要整齐、清晰。
 三、注意
 1.IMAGES文件夹由脚本自动创建，没有就创建，否则不创建。
 2.只需下载每组图片中的第一张即可。
@@ -69,11 +62,11 @@ def main():
         makePageDirs(id)
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
-        all_img=soup.find('div',class_='main').find('li').find_all("a",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+        all_img=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
         print(all_img)
         for img in all_img:
-            title=img['title']
-            print("title")
+            imgtitle=img[title]
+            print(title)
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
 main()
