@@ -60,12 +60,19 @@ def main():
     for id in range(1,2):
         html = "http://desk.zol.com.cn/dongman/"+str(id)+".html"
         makePageDirs(id)
+        count = 0;
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
-        all_img=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
-        for img in all_img:
-            imgTitle=img['title']
-            print(imgTitle)
+        all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+        for imgHref in all_ImgHref:
+            href = imgHref['href']
+        
+        all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")
+        for imgTitle in all_ImgTitle:
+            title = imgTitle['title']
+            print(title)
+            count += 1
+        print(count)
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
 main()
