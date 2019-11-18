@@ -63,10 +63,9 @@ def main():
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
         all_img=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
-        print(all_img)
         for img in all_img:
-            imgtitle=img[title]
-            print(title)
+            imgTitle=img['title']
+            print(imgTitle)
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
 main()
