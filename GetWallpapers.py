@@ -62,11 +62,6 @@ def makeSonDirs(id,imgName):#创建子目录
             print("创建了"+imgName+"文件夹")
     except:
         print("创建套图文件夹失败")
-
-import requests,os,re,lxml
-from bs4 import BeautifulSoup
-main()
-
 def main():
     makeIndexDirs()
     for id in range(1,2):
@@ -74,7 +69,15 @@ def main():
         makePageDirs(id)
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
-        all_img=soup.find('li',class_='photo-list-padding').find('ul').find_all("a",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+        all_img=soup.find('div',class_='main').find('li').find_all("a",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+        print(all_img)
+        for img in all_img:
+            title=img['title']
+            print("title")
+import requests,os,re,lxml
+from bs4 import BeautifulSoup
+main()
+
 
 
     
