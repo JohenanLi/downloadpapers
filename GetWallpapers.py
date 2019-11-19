@@ -62,17 +62,34 @@ def main():
         makePageDirs(id)
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
-        
-        
         all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")
+        titleList = []
+        hrefList = []
         for imgTitle in all_ImgTitle:
             title = imgTitle['title']
+            titleList.append(title)
             makeSonDirs(id,title)
         all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
         for imgHref in all_ImgHref:
             href = imgHref['href']
-            print(href)
-        #下一步是怎样将href和title一一对应，然后打开相应的title文件夹下载href对应链接的照片
+            hrefList.append(href)
+        pageInAndDownload(hrefList,titleList)
+
+def pageInAndDownload(hrefList=[],titleList=[]):
+    count = 0
+    countinner = 0
+    for i in range(len(hrefList)):
+        DetailImgHref = "http://desk.zol.com.cn/"+hrefList[i]
+        DetailImgText = getHtmlText(DetailImgHref)
+        DetailSoup = BeautifulSoup(DetailImgText,"html.parser")
+        DetailHref = DetailSoup.find('div',class_="wrapper mt15").find('dd',id='tagfbl').find('a',target="_blank")
+        countinner += 1
+        if "class" in str(DetailHref):
+            print("链接有误")
+        else:
+            print(DetailHref)
+            count += 1
+    print(count,countinner)
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
 main()
