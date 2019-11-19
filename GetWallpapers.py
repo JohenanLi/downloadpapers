@@ -31,16 +31,16 @@ def getHtmlText(url):#获取指定url下的源代码
 
 def makeIndexDirs():#创建主目录
     try:
-        if os.path.exists("D:\\壁纸") == False:
-            os.mkdir("D:\\壁纸")
-            os.chdir("D:\\壁纸")
-        print("当前壁纸下载存于D:\\壁纸")
+        if os.path.exists("D:\\IMAGES") == False:
+            os.mkdir("D:\\IMAGES")
+            os.chdir("D:\\IMAGES")
+        print("当前壁纸下载存于D:\\IMAGES")
     except:
         return "创建主目录时失败"
 
 def makePageDirs(id):#创建每页目录
     try:
-        filepath ="D:\\壁纸\\"+str(id)
+        filepath ="D:\\IMAGES\\"+str(id)
         if os.path.exists(filepath) == False:
             os.mkdir(filepath)
             print("创建了"+id+"文件夹")
@@ -49,8 +49,8 @@ def makePageDirs(id):#创建每页目录
 
 def makeSonDirs(id,imgName):#创建子目录
     try:
-        imgFile = "D:\\壁纸\\"+str(id)+imgName
-        if os.path.exists() == False:
+        imgFile = "D:\\IMAGES\\"+str(id)+"\\"+imgName
+        if os.path.exists(imgFile) == False:
             os.mkdir(imgFile)
             print("创建了"+imgName+"文件夹")
     except:
@@ -60,19 +60,19 @@ def main():
     for id in range(1,2):
         html = "http://desk.zol.com.cn/dongman/"+str(id)+".html"
         makePageDirs(id)
-        count = 0;
         htmlText = getHtmlText(html)
         soup =BeautifulSoup(htmlText,'html.parser')
-        all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
-        for imgHref in all_ImgHref:
-            href = imgHref['href']
+        
         
         all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")
         for imgTitle in all_ImgTitle:
             title = imgTitle['title']
-            print(title)
-            count += 1
-        print(count)
+            makeSonDirs(id,title)
+        all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
+        for imgHref in all_ImgHref:
+            href = imgHref['href']
+            print(href)
+        #下一步是怎样将href和title一一对应，然后打开相应的title文件夹下载href对应链接的照片
 import requests,os,re,lxml
 from bs4 import BeautifulSoup
 main()
