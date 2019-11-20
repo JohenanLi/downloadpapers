@@ -95,10 +95,8 @@ def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
         if 'showpic' in DetailHrefList[m]:
             DeDetailImgText = getHtmlText(DetailHrefList[m])
             DeDetailSoup = BeautifulSoup(DeDetailImgText,"html.parser")
-            print(DeDetailSoup)
-            
-            #DetailHrefList[m] = DeDetailSoupHref['src']
-    #print(DetailHrefList)
+            DetailHrefList[m] = DeDetailSoup.img['src']
+    print(DetailHrefList)
 import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
