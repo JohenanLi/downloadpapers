@@ -1,35 +1,13 @@
-"""
-一、内容
-爬取壁纸并保存到本地
-目标网站：http://desk.zol.com.cn/dongman/
-二、要求
-1.爬取目标网站上 “动漫” 类别下所有的壁纸。
-2.壁纸必须保存到脚本运行目录下的的 IMAGES文件夹内。
-3.保存的图片必须以对应标题名和分辨率来命名，如：秋田君的小漫画 - 1920x1200.jpg。
-4.图片分辨率应该是可选分辨率中最高的。
-5.要有提示信息，格式：正在下载 (下载数量)：(图片名字)。
- 如，在下载第 20张图片 秋田君的小漫画 时，提示应为：正在下载 20：秋田君的小漫画。
-6.要有错误处理并给出相应提示，如：图片下载失败、网络超时的处理等。
-三、注意
-1.IMAGES文件夹由脚本自动创建，没有就创建，否则不创建。
-2.只需下载每组图片中的第一张即可。
-3.图片必须是高分辨率大图，不能是网页中的缩略图。
-4.请在 11月 11日前完成，并打包发送至邮箱：1604890072@qq.com
-四、相关库
-•requests：https://requests.kennethreitz.org/en/master/
-•xpath语法：https://www.cnblogs.com/songshu120/p/5182043.html
-•sys：https://www.cnblogs.com/mufenglin/p/7676160.html
-"""
 def getHtmlText(url):#获取指定url下的源代码
     try:#使用try excpet捕捉错误
-        r = requests.get(url,timeout = 10)
+        r = requests.get(url,timeout = 10)#超过10s返回错误代码
         r.raise_for_status()
         r.encoding = 'gb2312'#已知网页编码为gb2312
         return r.text
     except:
         return "获取url源代码时失败"
 
-def makeIndexDirs():#创建主目录
+def makeIndexDirs():#创建主目录，并判断是否成功
     try:
         if os.path.exists("D:\\IMAGES") == False:
             os.mkdir("D:\\IMAGES")
@@ -38,7 +16,7 @@ def makeIndexDirs():#创建主目录
     except:
         return "创建主目录时失败"
 
-def makePageDirs(id):#创建每页目录
+def makePageDirs(id):#创建每页目录，并判断是否成功
     try:
         filepath ="D:\\IMAGES\\"+str(id)
         if os.path.exists(filepath) == False:
@@ -47,7 +25,7 @@ def makePageDirs(id):#创建每页目录
     except:
         return "创建每页目录时失败"
 
-def makeSonDirs(id,imgName):#创建子目录
+def makeSonDirs(id,imgName):#创建子目录，并判断是否成功
     try:
         imgFile = "D:\\IMAGES\\"+str(id)+"\\"+imgName
         if os.path.exists(imgFile) == False:
@@ -58,51 +36,64 @@ def makeSonDirs(id,imgName):#创建子目录
         print("创建套图文件夹失败")
 def main():
     makeIndexDirs()
-    for id in range(1,2):
+    for id in range(1,33):#偷懒，因为发现动漫类目下面只有32页
         html = "http://desk.zol.com.cn/dongman/"+str(id)+".html"
-        makePageDirs(id)
-        htmlText = getHtmlText(html)
+        makePageDirs(id)#创建每个id网页文件夹
+        htmlText = getHtmlText(html)#调用函数获取源码
         soup =BeautifulSoup(htmlText,'html.parser')
-        all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")
+        all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")#使用bs4获取所有img tag
         titleList = []
         hrefList = []
-        imgFileList = []
-        for imgTitle in all_ImgTitle:
+        imgFileList = []#建立三个list变量，之后用于储存和传递
+        for imgTitle in all_ImgTitle:#利用bs得到title并存于数组中
             title = imgTitle['title']
             titleList.append(title)
             imgFile = makeSonDirs(id,title)
             imgFileList.append(imgFile)
         all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
-        for imgHref in all_ImgHref:
+        for imgHref in all_ImgHref:#通过观察源码，利用代码进行多次筛选得到href
             href = imgHref['href']
             hrefList.append(href)
-        pageInAndDownload(hrefList,titleList,imgFileList)
+        pageInAndDownload(hrefList,titleList,imgFileList)#调用函数传递列表，类c语言指针
 
-def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
+def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):#进入具体页面并下载
     DetailHrefList = []
     ResolutionRatioList = []
-    for i in range(len(hrefList)):
+    for i in range(len(hrefList)):#进入二级页面得到具体href
         DetailImgHref = "http://desk.zol.com.cn/"+hrefList[i]
         DetailImgText = getHtmlText(DetailImgHref)
         DetailSoup = BeautifulSoup(DetailImgText,"html.parser")
         DetailHref = DetailSoup.find('div',class_="wrapper mt15").find('dd',id='tagfbl').find('a',target="_blank")
         
-        if "class" in str(DetailHref):
+        if "class" in str(DetailHref):#发现有几张特殊图片无法得到链接，原因在于缺少分辨率，因此直接转化为img的src
             WrongTurnHref = DetailSoup.find('div',class_='photo').find('img')
             DetailHrefList.append(WrongTurnHref['src'])
         else:
             DetailHrefList.append('http://desk.zol.com.cn'+DetailHref['href'])
-    for m in range(len(DetailHrefList)):
+    for m in range(len(DetailHrefList)):#进入三级页面得到剩余img的src
         if 'showpic' in DetailHrefList[m]:
             DeDetailImgText = getHtmlText(DetailHrefList[m])
             DeDetailSoup = BeautifulSoup(DeDetailImgText,"html.parser")
             DetailHrefList[m] = DeDetailSoup.img['src']
-        ResolutionRatioList.append(re.findall(r"t_s(.+?)c5",DetailHrefList[m]))
-    print(DetailHrefList)
-    print(ResolutionRatioList)
+        ResolutionRatioList.append(re.findall(r"t_s(.+?)c5",DetailHrefList[m]))#观察发现它们的分辨率都在这两个字符串中间，利用正则表达式
+    for j in range(len(DetailHrefList)):#利用python的存储文件方式存储，使用requests库的get得到content，给出相应的提示信息
+        imgUrl = DetailHrefList[j]
+        root = imgFileList[j]
+        fileName = str(titleList[j])+str(ResolutionRatioList[j])+".jpg"
+        path = root+"\\"+fileName
+        try:
+            GetRequest = requests.get(imgUrl)
+            with open (path,'wb') as f:
+                print("正在下载"+path)
+                f.write(GetRequest.content)
+                f.close()
+                print(path + "保存成功")
+        except:
+            print("文件爬取失败,源文件可能有问题")
 import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
+print("下载完毕")
 
 
 
