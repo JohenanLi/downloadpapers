@@ -53,6 +53,7 @@ def makeSonDirs(id,imgName):#创建子目录
         if os.path.exists(imgFile) == False:
             os.mkdir(imgFile)
             print("创建了"+imgName+"文件夹")
+        return imgFile
     except:
         print("创建套图文件夹失败")
 def main():
@@ -65,32 +66,35 @@ def main():
         all_ImgTitle=soup.find('ul',class_='pic-list2').find_all("img")
         titleList = []
         hrefList = []
+        imgFileList = []
         for imgTitle in all_ImgTitle:
             title = imgTitle['title']
             titleList.append(title)
-            makeSonDirs(id,title)
+            imgFile = makeSonDirs(id,title)
+            imgFileList.append(imgFile)
         all_ImgHref=soup.find('ul',class_='pic-list2').find_all("a",class_="pic",attrs={'href':re.compile('^((?!http).)*$'),'target':'_blank'})
         for imgHref in all_ImgHref:
             href = imgHref['href']
             hrefList.append(href)
-        pageInAndDownload(hrefList,titleList)
+        pageInAndDownload(hrefList,titleList,imgFileList)
 
-def pageInAndDownload(hrefList=[],titleList=[]):
-    count = 0
-    countinner = 0
+def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
+    DetailHrefList = []
     for i in range(len(hrefList)):
         DetailImgHref = "http://desk.zol.com.cn/"+hrefList[i]
         DetailImgText = getHtmlText(DetailImgHref)
         DetailSoup = BeautifulSoup(DetailImgText,"html.parser")
         DetailHref = DetailSoup.find('div',class_="wrapper mt15").find('dd',id='tagfbl').find('a',target="_blank")
-        countinner += 1
+        
         if "class" in str(DetailHref):
-            print("链接有误")
+            WrongTurnHref = DetailSoup.find('div',class_='photo').find('img')
+            DetailHrefList.append(WrongTurnHref['src'])
         else:
-            print(DetailHref)
-            count += 1
-    print(count,countinner)
-import requests,os,re,lxml
+            DetailHrefList.append('http://desk.zol.com.cn'+DetailHref['href'])
+    for m in range(len(DetailHrefList)):
+        
+     
+import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
 
