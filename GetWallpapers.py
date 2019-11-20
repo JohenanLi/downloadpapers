@@ -92,8 +92,13 @@ def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
         else:
             DetailHrefList.append('http://desk.zol.com.cn'+DetailHref['href'])
     for m in range(len(DetailHrefList)):
-        
-     
+        if 'showpic' in DetailHrefList[m]:
+            DeDetailImgText = getHtmlText(DetailHrefList[m])
+            DeDetailSoup = BeautifulSoup(DeDetailImgText,"html.parser")
+            print(DeDetailSoup)
+            
+            #DetailHrefList[m] = DeDetailSoupHref['src']
+    #print(DetailHrefList)
 import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
