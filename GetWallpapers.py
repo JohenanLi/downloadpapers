@@ -36,7 +36,7 @@ def makeSonDirs(id,imgName):#创建子目录，并判断是否成功
         print("创建套图文件夹失败")
 def main():
     makeIndexDirs()
-    for id in range(1,33):#偷懒，因为发现动漫类目下面只有32页
+    for id in range(1,34):#偷懒，因为发现动漫类目下面只有33页
         html = "http://desk.zol.com.cn/dongman/"+str(id)+".html"
         makePageDirs(id)#创建每个id网页文件夹
         htmlText = getHtmlText(html)#调用函数获取源码
