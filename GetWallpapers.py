@@ -80,6 +80,7 @@ def main():
 
 def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
     DetailHrefList = []
+    ResolutionRatioList = []
     for i in range(len(hrefList)):
         DetailImgHref = "http://desk.zol.com.cn/"+hrefList[i]
         DetailImgText = getHtmlText(DetailImgHref)
@@ -96,7 +97,9 @@ def pageInAndDownload(hrefList=[],titleList=[],imgFileList=[]):
             DeDetailImgText = getHtmlText(DetailHrefList[m])
             DeDetailSoup = BeautifulSoup(DeDetailImgText,"html.parser")
             DetailHrefList[m] = DeDetailSoup.img['src']
+        ResolutionRatioList.append(re.findall(r"t_s(.+?)c5",DetailHrefList[m]))
     print(DetailHrefList)
+    print(ResolutionRatioList)
 import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
