@@ -94,7 +94,7 @@ import requests,os,re,lxml,webbrowser
 from bs4 import BeautifulSoup
 main()
 print("下载完毕")
-
+print("增加套图下载")
 
 
     
